@@ -20,7 +20,10 @@ module.exports = {
   },
   plugins: [
     new CopyWebpackPlugin({
-      patterns: [{ from: path.resolve(__dirname, 'index.html') }],
+      patterns: [
+        { from: path.resolve(__dirname, 'index.html') },
+        { from: path.resolve(__dirname, 'img'), to: 'img' }
+      ],
     }),
   ],
   devServer: {
