@@ -1,206 +1,99 @@
 <!doctype html>
-<html>
+<html class="slds-scope">
   <head>
     <meta charset="utf-8">
     <title>Convert Google Doc to Markdown</title>
-    <!-- Include Source Sans because it's the default for Google Docs -->
-    <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.22.2/styles/salesforce-lightning-design-system.min.css">
     <style type="text/css">
-      * {
-        box-sizing: border-box;
+      .slds-scope {
+        height: 100vh;
       }
 
-      html, body {
-        background: #eee;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-        height: 100%;
-        margin: 0;
-      }
-
-      body {
+      .app-container {
         display: flex;
         flex-direction: column;
+        height: 100%;
       }
 
-      main {
+      .main-content {
         display: flex;
-        flex: 1 1 auto;
-        flex-direction: row;
-        justify-content: space-between;
-        width: 100%;
-        padding: 1em 2em;
+        flex: 1;
+        padding: 10rem 1rem 1rem 1rem;
+        gap: 1rem;
       }
 
-      #app-header {
-        flex: 0 0 auto;
-        margin: 0;
-        padding: 1em 2em;
-      }
-
-      #app-header h1 {
-        margin: 0 0 0.5em;
-        padding: 0;
-      }
-
-      #settings {
-        font-size: 0.75rem;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        align-items: baseline;
-        gap: 1em;
-      }
-
-      #settings input,
-      #settings select {
-        font-size: inherit;
+      .input-area, .output-area {
+        flex: 1;
+        position: relative;
       }
 
       .input-field {
-        border: 1px solid #ccc;
-        font-size: 1em;
-        overflow: auto;
-        padding: 1em;
-      }
-
-      #input-area {
-        position: relative;
-        width: calc(50% - 1em);
-      }
-
-      .instructions {
-        font-size: 2em;
-        font-weight: bold;
-        opacity: 0.5;
-        padding: 0 1em;
-        position: absolute;
-        top: 1em;
-        left: 0;
-        right: 0;
-        text-align: center;
+        width: 100%;
+        height: 100%;
+        min-height: 400px;
+        padding: 1rem;
+        border: 1px solid #dddbda;
+        border-radius: 0.25rem;
       }
 
       #input {
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        z-index: 1;
-      }
-
-      #output-area {
-        position: relative;
-        width: calc(50% - 1em);
+        background: #fff;
       }
 
       #output {
-        background: transparent;
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
+        font-family: monospace;
         white-space: pre-wrap;
       }
 
-      #app-footer {
-        flex: 0 0 auto;
-        margin: 0;
-        padding: 0 2em 1em;
-        font-style: italic;
-      }
-
-      #button-container {
+      .button-container {
         position: absolute;
-        right: 0;
-        top: 0;
+        right: 1rem;
+        top: 1rem;
         z-index: 2;
       }
 
-      /**
-       * Baseline Styling for Pasted Content
-       *
-       * Different browsers apply a variety of DOM and style normalizations to
-       * content when pasting into a contenteditable node. In some cases,
-       * normalizing against the built-in user agent or page styles will cause
-       * important formatting info to be lost entirely (e.g. bold text in
-       * headings). To prevent those issues, this applies some basic CSS resets
-       * to the input area.
-       */
-      #input h1,
-      #input h2,
-      #input h3,
-      #input h4,
-      #input h5,
-      #input h6 {
-        font-weight: normal;
-        text-decoration: none;
-      }
-
-      /* Make bookmarks visible in the input area. */
-      #input a[id^="id."]:before,
-      #input a[name^="id."]:before {
-        content: "※ "
+      .instructions {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        color: #706e6b;
+        font-weight: bold;
+        pointer-events: none;
       }
     </style>
   </head>
   <body>
-    <header id="app-header">
-      <h1>Convert Google Docs to Markdown</h1>
-
-      <form id="settings">
-        <strong><span aria-hidden="true">⚙️</span> Settings:</strong>
-
-        <label>
-          Linkable Headings:
-          <select name="headingIds">
-            <option value="hidden">None</option>
-            <option value="html">Plain Markdown (HTML)</option>
-            <option value="extended">Extended Markdown</option>
-          </select>
-        </label>
-
-        <label>
-          Code Blocks:
-          <select name="codeBlocks">
-            <option value="indented">Indented</option>
-            <option value="fenced">Fenced (```)</option>
-          </select>
-        </label>
-
-        <label>
-          Suggested changes:
-          <select name="suggestions">
-            <option value="show">Show suggestions</option>
-            <option value="accept">Accept/use suggestions</option>
-            <option value="reject">Reject/ignore suggestions</option>
-          </select>
-        </label>
-      </form>
-    </header>
-
-    <main>
-      <div id="input-area">
-        <p class="instructions">Paste Google Docs text here…</p>
-        <div id="input" class="input-field" contenteditable autocomplete="off"></div>
-      </div>
-
-      <div id="output-area">
-        <div id="button-container">
-          <button id="download-button" style="display: none;">Download Markdown</button>
-          <button id="copy-button" style="display: none;">Copy Markdown</button>
+    <div class="app-container">
+      <header class="slds-global-header slds-global-header_container">
+        <div class="slds-global-header__bar">
+          <div class="slds-global-header__item">
+            <h1 class="slds-text-heading_medium">Convert Google Docs to Markdown</h1>
+          </div>
         </div>
-        <p class="instructions">…and get your Markdown here</p>
-        <textarea id="output" class="input-field" autocomplete="off"></textarea>
-      </div>
-    </main>
+      </header>
 
-    <footer id="app-footer">
-      <p>Source code available on <a href="https://github.com/mr0grog/google-docs-to-markdown" target="_blank" rel="noopener">Github</a>.</p>
-    </footer>
+      <main class="main-content">
+        <div class="input-area">
+          <p class="instructions">Paste Google Docs text here…</p>
+          <div id="input" class="input-field" contenteditable autocomplete="off"></div>
+        </div>
+
+        <div class="output-area">
+          <div class="button-container">
+            <button id="download-images-button" class="slds-button slds-button_brand" style="display: none;">Convert Images</button>
+            <button id="download-button" class="slds-button slds-button_neutral" style="display: none;">Download Markdown</button>
+            <button id="copy-button" class="slds-button slds-button_neutral" style="display: none;">Copy Markdown</button>
+          </div>
+          <p class="instructions">…and get your Markdown here</p>
+          <textarea id="output" class="input-field" autocomplete="off"></textarea>
+        </div>
+      </main>
+
+      <footer class="slds-p-around_medium slds-text-align_center slds-text-body_small">
+        <p>Source code available on <a href="https://github.com/mr0grog/google-docs-to-markdown" target="_blank" rel="noopener">Github</a>.</p>
+      </footer>
+    </div>
     <script src="bundle.js"></script>
   </body>
 </html>
